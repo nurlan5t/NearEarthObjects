@@ -49,6 +49,7 @@ class NEODatabase:
         for neo in self._neos:
             for approach in self._approaches:
                 if neo.designation == approach._designation:
+
                     neo.approaches.append(approach)
                     approach.neo = neo
 
