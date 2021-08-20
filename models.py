@@ -70,7 +70,25 @@ class NearEarthObject:
         """Return `repr(self)`, a computer-readable string representation of this object."""
         return (f"NearEarthObject(designation={self.designation!r}, name={self.name!r}, "
                 f"diameter={self.diameter:.3f}, hazardous={self.hazardous!r})")
-
+    
+    def serialize(self):  
+        """Return a dictionary of all essential keywords of a NEO's object with their corresponding values defined in the class constructor __init__. 
+        This dictionary is later used to write into CSV/JSON output file.
+        Essential keyword for a NEO object are : name, designation,diameter_km,potentially_hazardous.
+        """
+        
+        neo_dict=dict()
+        if(self.name is None):
+            neo_dict['name']=''
+            
+        else:
+            neo_dict['name']="{neo_name}".format(neo_name=self.name)
+            
+        neo_dict['designation']="{des}".format(des=self.designation)
+        neo_dict['diameter_km']=self.diameter
+        neo_dict['potentially_hazardous']=self.hazardous
+        
+        return neo_dict
 
 class CloseApproach:
     """A close approach to Earth by an NEO.
@@ -133,3 +151,16 @@ class CloseApproach:
         """Return `repr(self)`, a computer-readable string representation of this object."""
         return (f"CloseApproach(time={self.time_str!r}, distance={self.distance:.2f}, "
                 f"velocity={self.velocity:.2f}, neo={self.neo!r})")
+
+    def serialize(self):   
+        """Return a dictionary of all essential keywords of a NEO's cloase approach object with their corresponding values defined in the class constructor __init__. 
+        This dictionary is later used to write into CSV/JSON output file.
+        Essential keyword for a NEO object are : datetime_utc,distance_au,velocity_km_s.
+        """
+        
+        approach_dict=dict()
+        approach_dict['datetime_utc']="{date_time}".format(date_time=self.time_str)
+        approach_dict['distance_au']=self.distance
+        approach_dict['velocity_km_s']=self.velocity
+        
+        return approach_dict

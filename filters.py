@@ -17,7 +17,7 @@ iterator.
 You'll edit this file in Tasks 3a and 3c.
 """
 import operator
-
+import itertools
 
 class UnsupportedCriterionError(NotImplementedError):
     """A filter criterion is unsupported."""
@@ -107,17 +107,74 @@ def create_filters(date=None, start_date=None, end_date=None,
     :return: A collection of filters for use with `query`.
     """
     # TODO: Decide how you will represent your filters.
-    return ()
+    class DateFilter(AttributeFilter):
+        """Derived from Attribute filter. Returns the date of a close approach in "date" format"""
+        @classmethod
+        def get(cls,approach):
+           return approach.time.date()
+
+    class VelocityFilter(AttributeFilter):
+        """Derived from Attribute filter. Returns the velocity of a close approach"""
+        @classmethod
+        def get(cls,approach):
+           return approach.velocity
+    
+    class DiameterFilter(AttributeFilter):
+        """Derived from Attribute filter. Returns the diameter of a close approach"""
+        @classmethod
+        def get(cls,approach):
+            return approach.neo.diameter
+    
+    class DistanceFilter(AttributeFilter):
+        """Derived from Attribute filter. Returns the distance of a close approach"""
+        @classmethod
+        def get(cls,approach):
+            return approach.distance
+    
+    class HazardousFilter(AttributeFilter):
+        """Derived from Attribute filter. Returns the hazardous status of a close approach"""
+        @classmethod
+        def get(cls,approach):
+            return approach.neo.hazardous
+        
+    #ELABORATE: 
+    #Create a list (main_filter) of all necessary filter functions that should be returned as a tuple which represents a collection of filters to be used with 'query' 
+    #Pass only those filter functions as a collection if & only if a user-defined criteria is specified as an argument with 'query'
+    #If a particluar argument is not defined by the user & is defaulted as None, then this argument will not pass any filter function to the main_filter list
+        
+    main_filter=[]    
+    if(date is not None):
+        main_filter.append(DateFilter(operator.eq,date)) #ELABORATE: Filter returns true if closed approach occurs on the exact "date"
+    if(start_date is not None):
+        main_filter.append(DateFilter(operator.ge,start_date)) #ELABORATE: Filter returns true if closed approach occurs on/after the "start_date"
+    if(end_date is not None):
+        main_filter.append(DateFilter(operator.le,end_date)) #ELABORATE: Filter returns true if closed approach occurs on/before the "end_date"
+    if(distance_min is not None):
+        main_filter.append(DistanceFilter(operator.ge,distance_min)) #ELABORATE: Filter returns true if closed approach's approach distance is >= distance_min 
+    if(distance_max is not None):
+        main_filter.append(DistanceFilter(operator.le,distance_max)) #ELABORATE: Filter returns true if closed approach's approach distance is <= distance_max
+    if(velocity_min is not None):
+        main_filter.append(VelocityFilter(operator.ge,velocity_min)) #ELABORATE: Filter returns true if closed approach's relative approach velocity is >= velocity_min
+    if(velocity_max is not None):
+        main_filter.append(VelocityFilter(operator.le,velocity_max)) #ELABORATE: Filter returns true if closed approach's relative approach velocity is <= velocity_max
+    if(diameter_min is not None):
+        main_filter.append(DiameterFilter(operator.ge,diameter_min)) #ELABORATE: Filter returns true if closed approach's diameter is >= diameter_min
+    if(diameter_max is not None):
+        main_filter.append(DiameterFilter(operator.le,diameter_max)) #ELABORATE: Filter returns true if closed approach's diameter is <= diameter_max
+    if(hazardous is not None):
+        main_filter.append(HazardousFilter(operator.eq,hazardous)) #ELABORATE: Filter returns true if closed approach's hazardous status matches with user-defined "hazardous" argument
+    
+    return tuple(main_filter)
 
 
 def limit(iterator, n=None):
     """Produce a limited stream of values from an iterator.
-
     If `n` is 0 or None, don't limit the iterator at all.
-
     :param iterator: An iterator of values.
     :param n: The maximum number of values to produce.
     :yield: The first (at most) `n` values from the iterator.
     """
-    # TODO: Produce at most `n` values from the given iterator.
-    return iterator
+    
+    if(n==0):
+        n=None
+    return itertools.islice(iterator,n)

@@ -93,18 +93,22 @@ class NEODatabase:
 
     def query(self, filters=()):
         """Query close approaches to generate those that match a collection of filters.
-
         This generates a stream of `CloseApproach` objects that match all of the
         provided filters.
-
         If no arguments are provided, generate all known close approaches.
-
         The `CloseApproach` objects are generated in internal order, which isn't
         guaranteed to be sorted meaninfully, although is often sorted by time.
-
         :param filters: A collection of filters capturing user-specified criteria.
         :return: A stream of matching `CloseApproach` objects.
         """
-        # TODO: Generate `CloseApproach` objects that match all of the filters.
+        
         for approach in self._approaches:
-            yield approach
+            output=[f(approach) for f in filters]   #ELABORATE:output consists of a list of closed approaches which are filtered by the :param filters
+            if(len(output) > 1): #ELABORATE:if output is a collection of more than 1 filter functions , then return approach only if it matches/satisfies all the filter functions 
+                if(all(output)): 
+                    yield approach
+            elif(len(output)==1): #ELABORATE:if output contains only one filter function, then return approach if it matches/satisfies this filter function 
+                if(output[0]):
+                    yield approach
+            else:   #ELABORATE:if output is empty or doesnt match any filter criteria, then return all closed approaches by default 
+                yield approach
