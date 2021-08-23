@@ -24,31 +24,27 @@ class NearEarthObject:
     """A near-Earth object (NEO).
 
     An NEO encapsulates semantic and physical parameters about the object, such
-    as its primary designation (required, unique), IAU name (optional), diameter
-    in kilometers (optional - sometimes unknown), and whether it's marked as
-    potentially hazardous to Earth.
+    as its primary designation (required, unique), IAU name (optional),
+    diameter in kilometers (optional - sometimes unknown),
+    and whether it's marked as potentially hazardous to Earth.
 
     A `NearEarthObject` also maintains a collection of its close approaches -
     initialized to an empty collection, but eventually populated in the
     `NEODatabase` constructor.
     """
-    # TODO: How can you, and should you, change the arguments to this constructor?
-    # If you make changes, be sure to update the comments in this file.
-    # Construct arguments should accept
-    def __init__(self, designation, name=None, diameter=float('nan'), hazardous=False):
-        """Create a new `NearEarthObject`.
 
-        :param info: A dictionary of excess keyword arguments supplied to the constructor.
+    def __init__(
+        self, designation, name=None, diameter=float('nan'),
+            hazardous=False):
+        """Create a new `NearEarthObject`.
+        :param info: A dictionary of excess keyword arguments
+        supplied to the constructor.
         """
-        # TODO: Assign information from the arguments passed to the constructor
-        # onto attributes named `designation`, `name`, `diameter`, and `hazardous`.
-        # You should coerce these values to their appropriate data type and
-        # handle any edge cases, such as a empty name being represented by `None`
-        # and a missing diameter being represented by `float('nan')`.
+
         self.designation = str(designation)
         self.name = str(name) if name else None
         self.diameter = float(diameter) if diameter else float('nan')
-        self.hazardous = True if hazardous=='Y' else False
+        self.hazardous = True if hazardous == 'Y' else False
 
         # Create an empty initial collection of linked approaches.
         self.approaches = []
@@ -56,66 +52,66 @@ class NearEarthObject:
     @property
     def fullname(self):
         """Return a representation of the full name of this NEO."""
-        # TODO: Use self.designation and self.name to build a fullname for this object.
         return f'{self.designation} {self.name}'
 
     def __str__(self):
         """Return `str(self)`."""
-        # TODO: Use this object's attributes to return a human-readable string representation.
-        # The project instructions include one possibility. Peek at the __repr__
-        # method for examples of advanced string formatting.
-        return f"A NearEarthObject {self.fullname} has a diameter of {self.diameter:.3f} km and is potentially hazardous = {self.hazardous}"
+        return (f"A NearEarthObject {self.fullname} has a diameter of "
+                f"{self.diameter:.3f} km and is potentially "
+                f"hazardous = {self.hazardous}")
 
     def __repr__(self):
-        """Return `repr(self)`, a computer-readable string representation of this object."""
-        return (f"NearEarthObject(designation={self.designation!r}, name={self.name!r}, "
+        """Return `repr(self)`, a computer-readable string
+        representation of this object."""
+        return (f"NearEarthObject(designation={self.designation!r},"
+                f"name={self.name!r}, "
                 f"diameter={self.diameter:.3f}, hazardous={self.hazardous!r})")
-    
-    def serialize(self):  
-        """Return a dictionary of all essential keywords of a NEO's object with their corresponding values defined in the class constructor __init__. 
-        This dictionary is later used to write into CSV/JSON output file.
-        Essential keyword for a NEO object are : name, designation,diameter_km,potentially_hazardous.
+
+    def serialize(self):
+        """Return a dictionary of all essential keywords of a NEO's object
+        with their corresponding values defined in the class constructor
+        __init__. This dictionary is later used to write into CSV/JSON
+        output file. Essential keyword for a NEO object are :
+        name, designation, diameter_km, potentially_hazardous.
         """
-        
-        neo_dict=dict()
+
+        neo_dict = dict()
         if(self.name is None):
-            neo_dict['name']=''
-            
+            neo_dict['name'] = ''
+
         else:
-            neo_dict['name']="{neo_name}".format(neo_name=self.name)
-            
-        neo_dict['designation']="{des}".format(des=self.designation)
-        neo_dict['diameter_km']=self.diameter
-        neo_dict['potentially_hazardous']=self.hazardous
-        
+            neo_dict['name'] = "{neo_name}".format(neo_name=self.name)
+        neo_dict['designation'] = "{des}".format(des=self.designation)
+        neo_dict['diameter_km'] = self.diameter
+        neo_dict['potentially_hazardous'] = self.hazardous
         return neo_dict
+
 
 class CloseApproach:
     """A close approach to Earth by an NEO.
 
-    A `CloseApproach` encapsulates information about the NEO's close approach to
-    Earth, such as the date and time (in UTC) of closest approach, the nominal
-    approach distance in astronomical units, and the relative approach velocity
-    in kilometers per second.
+    A `CloseApproach` encapsulates information about the NEO's close approach
+    to Earth, such as the date and time (in UTC) of closest approach,
+    the nominal approach distance in astronomical units, and the relative
+    approach velocity in kilometers per second.
 
     A `CloseApproach` also maintains a reference to its `NearEarthObject` -
     initally, this information (the NEO's primary designation) is saved in a
     private attribute, but the referenced NEO is eventually replaced in the
     `NEODatabase` constructor.
     """
-    # TODO: How can you, and should you, change the arguments to this constructor?
-    # If you make changes, be sure to update the comments in this file.
-    def __init__(self, time, distance=float('nan'), velocity=float('nan'), neo=None, designation=None):
-        """Create a new `CloseApproach`.
 
-        :param info: A dictionary of excess keyword arguments supplied to the constructor.
+    def __init__(
+        self, time, distance=float('nan'), velocity=float('nan'),
+            neo=None, designation=None):
+
+        """Create a new `CloseApproach`.
+        :param info: A dictionary of excess keyword arguments
+        supplied to the constructor.
         """
-        # TODO: Assign information from the arguments passed to the constructor
-        # onto attributes named `_designation`, `time`, `distance`, and `velocity`.
-        # You should coerce these values to their appropriate data type and handle any edge cases.
-        # The `cd_to_datetime` function will be useful.
+
         self._designation = str(designation) if designation else ''
-        self.time = cd_to_datetime(time)  # TODO: Use the cd_to_datetime function for this attribute.
+        self.time = cd_to_datetime(time)
         self.distance = float(distance)
         self.velocity = float(velocity)
 
@@ -124,43 +120,45 @@ class CloseApproach:
 
     @property
     def time_str(self):
-        """Return a formatted representation of this `CloseApproach`'s approach time.
-
-        The value in `self.time` should be a Python `datetime` object. While a
-        `datetime` object has a string representation, the default representation
-        includes seconds - significant figures that don't exist in our input
-        data set.
+        """Return a formatted representation of this `CloseApproach`'s
+        approach time.
+        The value in `self.time` should be a Python `datetime` object.
+        While a `datetime` object has a string representation,
+        the default representation includes seconds - significant
+        figures that don't exist in our input data set.
 
         The `datetime_to_str` method converts a `datetime` object to a
         formatted string that can be used in human-readable representations and
         in serialization to CSV and JSON files.
         """
-        # TODO: Use this object's `.time` attribute and the `datetime_to_str` function to
-        # build a formatted representation of the approach time.
-        # TODO: Use self.designation and self.name to build a fullname for this object.
         return datetime_to_str(self.time)
 
     def __str__(self):
         """Return `str(self)`."""
-        # TODO: Use this object's attributes to return a human-readable string representation.
-        # The project instructions include one possibility. Peek at the __repr__
-        # method for examples of advanced string formatting.
-        return f"At {self.time_str}, '{self._designation}' approaches Earth at a distance of {self.distance:.2f} au and a velocity of {self.velocity:.2f} km/s."
+
+        return (f"At {self.time_str}, '{self._designation}' "
+                f"approaches Earth at a distance of {self.distance:.2f} au"
+                f"and a velocity of {self.velocity:.2f} km/s.")
 
     def __repr__(self):
-        """Return `repr(self)`, a computer-readable string representation of this object."""
-        return (f"CloseApproach(time={self.time_str!r}, distance={self.distance:.2f}, "
+        """Return `repr(self)`, a computer-readable
+        string representation of this object."""
+        return (f"CloseApproach(time={self.time_str!r}, "
+                "distance={self.distance:.2f}, "
                 f"velocity={self.velocity:.2f}, neo={self.neo!r})")
 
-    def serialize(self):   
-        """Return a dictionary of all essential keywords of a NEO's cloase approach object with their corresponding values defined in the class constructor __init__. 
+    def serialize(self):
+        """Return a dictionary of all essential
+        keywords of a NEO's cloase approach object with their
+        corresponding values defined in the class constructor __init__.
         This dictionary is later used to write into CSV/JSON output file.
-        Essential keyword for a NEO object are : datetime_utc,distance_au,velocity_km_s.
+        Essential keyword for a NEO object are :
+        datetime_utc,distance_au,velocity_km_s.
         """
-        
-        approach_dict=dict()
-        approach_dict['datetime_utc']="{date_time}".format(date_time=self.time_str)
-        approach_dict['distance_au']=self.distance
-        approach_dict['velocity_km_s']=self.velocity
-        
+
+        approach_dict = dict()
+        approach_dict['datetime_utc'] = "{date_time}".format(
+            date_time=self.time_str)
+        approach_dict['distance_au'] = self.distance
+        approach_dict['velocity_km_s'] = self.velocity
         return approach_dict
