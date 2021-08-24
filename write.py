@@ -1,4 +1,5 @@
 """Write a stream of close approaches to CSV or to JSON.
+
 This module exports two functions: `write_to_csv` and `write_to_json`, each of
 which accept an `results` stream of close approaches and a path to which to
 write the data.
@@ -13,11 +14,13 @@ import json
 
 def write_to_csv(results, filename):
     """Write an iterable of `CloseApproach` objects to a CSV file.
+
     The precise output specification is in `README.md`.
     Roughly, each output row
     corresponds to the information in a single
     close approach from the `results`
     stream and its associated near-Earth object.
+
     :param results: An iterable of `CloseApproach` objects.
     :param filename:
     A Path-like object pointing to where the data should be saved.
@@ -25,8 +28,6 @@ def write_to_csv(results, filename):
     fieldnames = (
         'datetime_utc', 'distance_au', 'velocity_km_s',
         'designation', 'name', 'diameter_km', 'potentially_hazardous')
-    # Write the results to a CSV file,
-    # following the specification in the instructions.
 
     final_list = []
     for elem in results:
@@ -42,6 +43,7 @@ def write_to_csv(results, filename):
 
 def write_to_json(results, filename):
     """Write an iterable of `CloseApproach` objects to a JSON file.
+
     The precise output specification is in `README.md`.
     Roughly, the output is a
     list containing dictionaries, each mapping `CloseApproach` attributes to
@@ -51,7 +53,6 @@ def write_to_json(results, filename):
     :param filename: A Path-like object pointing
     to where the data should be saved.
     """
-
     final_list = []
     for elem in results:
         elem_dict = elem.serialize()
